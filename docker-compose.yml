@@ -10,7 +10,7 @@ services:
   php-fpm:
     build: ./docker/php
     volumes:
-      - /var/www/html:/var/www/html
+      - /home/ochir/projects_1/online-shop/src/public:/var/www/html
 
   postgres:
     image: postgres:13
