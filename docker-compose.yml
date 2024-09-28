@@ -5,7 +5,7 @@ services:
       - 80:80
     volumes:
       - /home/ochir/projects_1/online-shop/docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
-      - /home/ochir/projects_1/online-shop:/var/www/html
+      - /home/ochir/projects_1/online-shop/src/public:/var/www/html
 
   php-fpm:
     build: ./docker/php
