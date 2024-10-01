@@ -7,7 +7,7 @@
     <label for="name"><b>Name</b></label>
     <label style="color: red;">
         <?php if (!empty($errors['name'])) {
-                print_r($errors['name']);
+            print_r($errors['name']);
         }?>
     </label>
     <input type="text" placeholder="Enter Name" name="name" id="name" required>

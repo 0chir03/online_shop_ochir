@@ -12,9 +12,9 @@ if (isset($_POST['name'])) {
         $errors['name'] = 'Имя не может быть пустым';
     } elseif (strlen($name) < 2) {
         $errors['name'] = 'Не менее 2 символов';
-    } elseif (is_numeric($name)) {
-        $errors['name'] = 'Имя не должен быть числом';
-    }
+    } elseif (is_numeric($name)) {                          //
+        $errors['name'] = 'Имя не должен быть числом';      //Проверяет, что имя не является числом
+    }                                                       //
 } else {
     $errors['name'] = 'Поле name не указано';
 }
