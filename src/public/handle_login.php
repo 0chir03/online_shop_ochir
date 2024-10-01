@@ -1,7 +1,5 @@
 <?php
 
-$login = $_POST['login'];
-$password = $_POST['password'];
 $errors = [];
 
 if (isset($_POST['login'])) {
@@ -21,17 +19,15 @@ if (isset($_POST['password'])) {
 
 if (empty($errors)) {
     $pdo = new PDO('pgsql:host=postgres;port=5432;dbname=mydb', 'user', 'pass');
-    $result = $pdo->prepare("SELECT password FROM users WHERE email = :login");
-    $result->execute(['login' => $login]);
-    $stmt = $result->fetch();
-}
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE email = :login");
+    $stmt->execute(['login' => $login]);
+    $data = $stmt->fetch();
 
-if (empty($stmt[0])) {
-    $errors['login'] = "Неверный логин";
-    } elseif (password_verify($password, $stmt[0])) {
-    echo "GOOD!!!";
-} else {
-    $errors['password'] = 'Неверный пароль';
+    if (password_verify($password, $data['password'])) {
+        echo "GOOD!!!";
+    } else {
+        $errors['password'] = 'Неверный логин или пароль';
+    }
 }
 
 require_once './get_login.php';
