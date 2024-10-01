@@ -1,14 +1,66 @@
 <?php
+$name = $_POST['name'];
+$email = $_POST['email'];
+$password = $_POST['psw'];
+$passwordRep = $_POST['psw-repeat'];
 
-$name = $_GET['name'];
-$email = $_GET['email'];
-$password = $_GET['psw'];
-$passwordRep = $_GET['psw-repeat'];
+$errors = [];
+
+if (isset($_POST['name'])) {
+    $name = $_POST['name'];
+    if (empty($name)) {
+        $errors['name'] = 'Имя не может быть пустым';
+    } elseif (strlen($name) < 2) {
+        $errors['name'] = 'Не менее 2 символов';
+    } elseif (is_numeric($name)) {
+        $errors['name'] = 'Имя не должен быть числом';
+    }
+} else {
+    $errors['name'] = 'Поле name не указано';
+}
+
+if (isset($_POST['email'])) {
+    $email = $_POST['email'];
+    if (empty($email)) {
+        $errors['email'] = 'email не может быть пустым';
+    } elseif (strpos($email, '@') === false) {
+        $errors['email'] = 'неверный адрес';
+    }
+} else {
+    $errors['email'] = 'Поле email не указано';
+}
+
+if (isset($_POST['psw'])) {
+    $password = $_POST['psw'];
+    if (empty($password)) {
+        $errors['password'] = 'Пароль не может быть пустым';
+    } elseif (strlen($password) < 6) {
+        $errors['password'] = 'Не менее 6 символов';
+    }
+} else {
+    $errors['password'] = "Поле password не указано";
+}
+
+if (isset($_POST['psw-repeat'])) {
+    $passwordRep = $_POST['psw-repeat'];
+    if ($passwordRep !== $password) {
+        $errors['passwordRep'] = "Пароли не совпадают";
+    }
+} else {
+    $errors['passwordRep'] = 'Поле repeat password не указано';
+}
+
+if (empty($errors)) {
+    $pdo = new PDO('pgsql:host=postgres;port=5432;dbname=mydb', 'user', 'pass');
+    $stmt = $pdo->prepare("INSERT INTO users (name, email, password) VALUES (:name, :email, :password)");
+    $hash = password_hash($password, PASSWORD_DEFAULT);
+    $stmt->execute(['name' => $name, 'email' => $email, 'password' => $hash]);
+
+    $stmt = $result = $pdo->prepare("SELECT * FROM users WHERE email = :email");
+    $stmt->execute(['email' => $email]);
+    print_r($stmt->fetch());
+}
+
+require_once './get_registration.php';
 
 
-
-$pdo = new PDO( 'pgsql:host=postgres;port=5432;dbname=mydb', 'user', 'pass');
-$pdo->exec("INSERT INTO users (name, email, password) VALUES ('$name', '$email', '$password')");
-
-$result = $pdo->query("SELECT * FROM users ORDER BY id DESC");
-print_r($result->fetch());
