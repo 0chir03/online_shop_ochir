@@ -23,10 +23,16 @@ if (empty($errors)) {
     $stmt->execute(['login' => $login]);
     $data = $stmt->fetch();
 
-    if (password_verify($password, $data['password'])) {
-        echo "GOOD!!!";
+    if ($data === false) {
+        $errors['login'] = "Неверный логин или пароль";
     } else {
-        $errors['password'] = 'Неверный логин или пароль';
+        $passwordFromDb = $data['password'];
+
+        if (password_verify($password, $passwordFromDb)) {
+            setcookie('user_id', $data['id']);
+        } else {
+            $errors['password'] = 'Неверный пароль';
+        }
     }
 }
 
