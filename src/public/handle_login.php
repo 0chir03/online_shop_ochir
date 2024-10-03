@@ -29,7 +29,9 @@ if (empty($errors)) {
         $passwordFromDb = $data['password'];
 
         if (password_verify($password, $passwordFromDb)) {
-            setcookie('user_id', $data['id']);
+            session_start();
+            $_SESSION['user_id'] = $data['id'];
+            header("Location: ./catalog");
         } else {
             $errors['password'] = 'Неверный пароль';
         }
