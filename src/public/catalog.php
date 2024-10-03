@@ -17,7 +17,7 @@ if (!isset($_SESSION['user_id'])) {
         <?php foreach ($products as $product): ?>
         <div class="card text-center">
             <a href="#">
-                <img class="card-img-top" src="<?php echo $product['images']?>" alt="Card image">
+                <img class="card-img-top" src="<?php echo $product['image']?>" alt="Card image">
                 <div class="card-body">
                     <p class="card-text text-muted"><?php echo $product['name']; ?></p>
                     <div class="card-footer">
