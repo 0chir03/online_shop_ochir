@@ -1,4 +1,4 @@
-<form action="handle_login.php" method="POST">
+<form action="/login" method="POST">
     <div class="container">
         <div class="login">
             <h2>Login</h2>
