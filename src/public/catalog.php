@@ -30,8 +30,7 @@ if (!isset($_SESSION['user_id'])) {
                                         print_r($errors['product_id']);
                                     }?>
                                 </label>
-                                <input type="text" placeholder="Enter product-id" hidden name="product_id" value="<?php echo $product['id']; ?>" id="product_id" required>
-
+                                <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>" id="product_id" required>
                                 <label for="amount"><b>Amount</b></label>
                                 <label style="color: red">
                                     <?php if (!empty($errors['amount'])) {
