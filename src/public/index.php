@@ -33,9 +33,9 @@ if ($requestUri === '/login') {
     } else {
         echo "$requestMethod не поддерживается адресом $requestUri";
     }
-} elseif ($requestUri === '/card') {
+} elseif ($requestUri === '/cart') {
     if ($requestMethod === 'GET') {
-        require_once './get_card.php';
+        require_once './get_cart.php';
     } else {
         echo "$requestMethod не поддерживается адресом $requestUri";
     }

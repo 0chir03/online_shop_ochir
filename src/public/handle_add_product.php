@@ -6,13 +6,13 @@ $errors = [];
 if (!isset($_SESSION['user_id'])) {
     header('Location: ./login');
 } else {
-    $user_id = $_SESSION['user_id'];
+    $userId = $_SESSION['user_id'];
 }
 
 if (empty($_POST['product_id'])) {
     $errors['product_id'] = 'Выберите продукт';
 } else {
-    $product_id = $_POST['product_id'];
+    $productId = $_POST['product_id'];
 }
 
 if (empty($_POST['amount'])) {
@@ -23,9 +23,18 @@ if (empty($_POST['amount'])) {
 
 if (empty($errors)) {
     $pdo = new PDO('pgsql:host=postgres;port=5432;dbname=mydb', 'user', 'pass');
-    $stmt = $pdo->prepare("INSERT INTO user_products (user_id, product_id, amount) VALUES (:user_id, :product_id, :amount)");
-    $stmt->execute(['user_id' => $user_id, 'product_id' => $product_id, 'amount' => $amount]);
-    header("Location: ./card");
-}
+    $stmt = $pdo->prepare("SELECT * FROM user_products WHERE user_id = :userId AND product_id = :productId");
+    $stmt->execute(['userId' => $userId, 'productId' => $productId]);
+    $result = $stmt->fetchAll();
 
-require_once './get_add_product.php';
+    if (empty($result)) {
+        $stmt = $pdo->prepare("INSERT INTO user_products (user_id, product_id, amount) VALUES (:userId, :productId, :amount)");
+        $stmt->execute(['userId' => $userId, 'productId' => $productId, 'amount' => $amount]);
+        header("Location: ./cart");
+    } else {
+        $stmt = $pdo->prepare("UPDATE user_products SET amount = amount + :amount ");
+        $stmt->execute(['amount' => $amount]);
+        header("Location: ./cart");
+    }
+
+}
