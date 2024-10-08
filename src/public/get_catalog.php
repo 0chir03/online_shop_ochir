@@ -1,16 +1,3 @@
-<?php
-session_start();
-
-if (!isset($_SESSION['user_id'])) {
-    header("Location: /get_login.php");
-} else {
-    $pdo = new PDO('pgsql:host=postgres;port=5432;dbname=mydb', 'user', 'pass');
-    $stmt = $pdo->query("SELECT * FROM products");
-    $products = $stmt->fetchAll();
-}
-
-?>
-
 <div class="container">
     <h3>Catalog</h3>
     <div class="card-deck">
@@ -24,20 +11,20 @@ if (!isset($_SESSION['user_id'])) {
                             <div class="card-footer">
                                 <?php echo $product['price']; ?>
                             </div>
-                                </div>
-                                <label style="color: red;">
-                                    <?php if (!empty($errors['product_id'])) {
-                                        print_r($errors['product_id']);
-                                    }?>
-                                </label>
-                                <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>" id="product_id" required>
-                                <label for="amount"><b>Amount</b></label>
-                                <label style="color: red">
-                                    <?php if (!empty($errors['amount'])) {
-                                        print_r($errors['amount']);
-                                    }?>
-                                </label>
-                                <input type="text" placeholder="Enter amount" name="amount" id="amount" required>
+                        </div>
+                        <label style="color: red;">
+                            <?php if (!empty($errors['product_id'])) {
+                                print_r($errors['product_id']);
+                            }?>
+                        </label>
+                        <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>" id="product_id" required>
+                        <label for="amount"><b>Amount</b></label>
+                        <label style="color: red">
+                            <?php if (!empty($errors['amount'])) {
+                                print_r($errors['amount']);
+                            }?>
+                        </label>
+                        <input type="text" placeholder="Enter amount" name="amount" id="amount" required>
 
                         <button type="submit" class="registerbtn">Добавить</button>
                     </a>
