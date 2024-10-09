@@ -2,7 +2,8 @@
 
 class user
 {
-    public function  validateReg()
+
+    public function  validateReg()      //ВАЛИДАЦИЯ ДАННЫХ ПРИ РЕГИСТРАЦИИ
     {
         $errors = [];
 
@@ -49,7 +50,15 @@ class user
         } else {
             $errors['passwordRep'] = 'Поле repeat password не указано';
         }
+        return $errors;
+    }
 
+    public function reg()       //РЕГИСТРАЦИЯ ПОЛЬЗОВАТЕЛЯ (ДОБАВЛЕНИЕ ДАННЫХ В БД)
+    {
+        $errors = $this->validateReg();
+        $name = $_POST['name'];
+        $email = $_POST['email'];
+        $password = $_POST['psw'];
         if (empty($errors)) {
             $pdo = new PDO('pgsql:host=postgres;port=5432;dbname=mydb', 'user', 'pass');
             $stmt = $pdo->prepare("INSERT INTO users (name, email, password) VALUES (:name, :email, :password)");
@@ -57,11 +66,12 @@ class user
             $stmt->execute(['name' => $name, 'email' => $email, 'password' => $hash]);
             header("Location: ./login");
         }
-
         require_once './get_registration.php';
     }
 
-    public function validateLog()
+
+
+    public function validateLog()       //ВАЛИДАЦИЯ ДАННЫХ ПРИ АУТЕНТИФИКАЦИИ
     {
         $errors = [];
 
@@ -79,7 +89,14 @@ class user
                 $errors['password'] = 'Password не может быть пустым';
             }
         }
+        return $errors;
+    }
 
+    public function log()       //АУТЕНТИФИКАЦИЯ ПОЛЬЗОВАТЕЛЯ
+    {
+        $errors = $this->validateLog();
+        $login = $_POST['login'];
+        $password = $_POST['password'];
         if (empty($errors)) {
             $pdo = new PDO('pgsql:host=postgres;port=5432;dbname=mydb', 'user', 'pass');
             $stmt = $pdo->prepare("SELECT * FROM users WHERE email = :login");

@@ -2,7 +2,7 @@
 
 class catalog
 {
-    public function getCatalog()
+    public function getCatalog()        //ВЫВОД КАТАЛОГА
     {
         session_start();
 
@@ -18,29 +18,30 @@ class catalog
     }
 
 
-    public function getAddProduct()
+    public function validateProduct()       //ВАЛИДАЦИЯ ПРОДУКТА
     {
-        session_start();
         $errors = [];
 
         if (!isset($_SESSION['user_id'])) {
             header('Location: ./login');
-        } else {
-            $userId = $_SESSION['user_id'];
         }
 
         if (empty($_POST['product_id'])) {
             $errors['product_id'] = 'Выберите продукт';
-        } else {
-            $productId = $_POST['product_id'];
         }
 
         if (empty($_POST['amount'])) {
             $errors['amount'] = 'Укажите необходимое количество продукта';
-        } else {
-            $amount = $_POST['amount'];
         }
-
+        return $errors;
+    }
+    public function addProduct()        //ДОБАВЛЕНИЕ ПРОДУКТА В КОРЗИНУ
+    {
+        session_start();
+        $errors = $this->validateProduct();
+        $userId = $_SESSION['user_id'];
+        $productId = $_POST['product_id'];
+        $amount = $_POST['amount'];
         if (empty($errors)) {
             $pdo = new PDO('pgsql:host=postgres;port=5432;dbname=mydb', 'user', 'pass');
             $stmt = $pdo->prepare("SELECT * FROM user_products WHERE user_id = :userId AND product_id = :productId");
@@ -56,7 +57,23 @@ class catalog
                 $stmt->execute(['amount' => $amount]);
                 header("Location: ./cart");
             }
-
         }
+    }
+
+
+    public function getCart()       //ВЫВОД КОРЗИНЫ
+    {
+        session_start();
+
+        if (!isset($_SESSION['user_id'])) {
+            header("Location: /get_login.php");
+        } else {
+            $user_id = $_SESSION['user_id'];
+            $pdo = new PDO('pgsql:host=postgres;port=5432;dbname=mydb', 'user', 'pass');
+            $stmt = $pdo->prepare("SELECT * FROM products INNER JOIN user_products ON products.id = user_products.product_id WHERE user_products.user_id = :user_id");
+            $stmt->execute(['user_id' => $user_id]);
+            $data = $stmt->fetchAll();
+        }
+        require_once "./get_cart.php";
     }
 }

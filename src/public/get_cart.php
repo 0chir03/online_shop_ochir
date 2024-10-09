@@ -1,18 +1,3 @@
-<?php
-
-session_start();
-
-if (!isset($_SESSION['user_id'])) {
-    header("Location: /get_login.php");
-} else {
-    $user_id = $_SESSION['user_id'];
-    $pdo = new PDO('pgsql:host=postgres;port=5432;dbname=mydb', 'user', 'pass');
-    $stmt = $pdo->prepare("SELECT * FROM products INNER JOIN user_products ON products.id = user_products.product_id WHERE user_products.user_id = :user_id");
-    $stmt->execute(['user_id' => $user_id]);
-    $data = $stmt->fetchAll();
-}
-?>
-
 <div class="container">
     <h3>Корзина</h3>
     <div class="card-deck">
