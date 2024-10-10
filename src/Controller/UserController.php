@@ -1,7 +1,27 @@
 <?php
 
-class user
+class UserController
 {
+
+    public function getRegistrateForm()
+    {
+        require_once './../View/registrate.php';
+    }
+    public function registrate()        //РЕГИСТРАЦИЯ ПОЛЬЗОВАТЕЛЯ (ДОБАВЛЕНИЕ ДАННЫХ В БД)
+    {
+        $errors = $this->validateReg();
+        $name = $_POST['name'];
+        $email = $_POST['email'];
+        $password = $_POST['psw'];
+        if (empty($errors)) {
+            $hash = password_hash($password, PASSWORD_DEFAULT);
+            require_once './../Model/User.php';
+            $user = new User();
+            $user->create($name, $email, $hash);
+            header("Location: /login");
+        }
+        require_once './../View/registrate.php';
+    }
 
     public function  validateReg()      //ВАЛИДАЦИЯ ДАННЫХ ПРИ РЕГИСТРАЦИИ
     {
@@ -53,23 +73,35 @@ class user
         return $errors;
     }
 
-    public function reg()       //РЕГИСТРАЦИЯ ПОЛЬЗОВАТЕЛЯ (ДОБАВЛЕНИЕ ДАННЫХ В БД)
+    public function getLoginForm()
     {
-        $errors = $this->validateReg();
-        $name = $_POST['name'];
-        $email = $_POST['email'];
-        $password = $_POST['psw'];
-        if (empty($errors)) {
-            $pdo = new PDO('pgsql:host=postgres;port=5432;dbname=mydb', 'user', 'pass');
-            $stmt = $pdo->prepare("INSERT INTO users (name, email, password) VALUES (:name, :email, :password)");
-            $hash = password_hash($password, PASSWORD_DEFAULT);
-            $stmt->execute(['name' => $name, 'email' => $email, 'password' => $hash]);
-            header("Location: ./login");
-        }
-        require_once './get_registration.php';
+        require_once './../View/login.php';
     }
+    public function login()       //АУТЕНТИФИКАЦИЯ ПОЛЬЗОВАТЕЛЯ
+    {
+        $errors = $this->validateLog();
+        $login = $_POST['login'];
+        $password = $_POST['password'];
+        if (empty($errors)) {
+            require_once './../Model/User.php';
+            $user = new User();
+            $data=$user->getByLogin($login);
+            if ($data === false) {
+                $errors['login'] = "Неверный логин или пароль";
+            } else {
+                $passwordFromDb = $data['password'];
 
-
+                if (password_verify($password, $passwordFromDb)) {
+                    session_start();
+                    $_SESSION['user_id'] = $data['id'];
+                    header("Location: ./catalog");
+                } else {
+                    $errors['password'] = 'Неверный пароль';
+                }
+            }
+        }
+        require_once './../View/login.php';
+    }
 
     public function validateLog()       //ВАЛИДАЦИЯ ДАННЫХ ПРИ АУТЕНТИФИКАЦИИ
     {
@@ -90,33 +122,5 @@ class user
             }
         }
         return $errors;
-    }
-
-    public function log()       //АУТЕНТИФИКАЦИЯ ПОЛЬЗОВАТЕЛЯ
-    {
-        $errors = $this->validateLog();
-        $login = $_POST['login'];
-        $password = $_POST['password'];
-        if (empty($errors)) {
-            $pdo = new PDO('pgsql:host=postgres;port=5432;dbname=mydb', 'user', 'pass');
-            $stmt = $pdo->prepare("SELECT * FROM users WHERE email = :login");
-            $stmt->execute(['login' => $login]);
-            $data = $stmt->fetch();
-
-            if ($data === false) {
-                $errors['login'] = "Неверный логин или пароль";
-            } else {
-                $passwordFromDb = $data['password'];
-
-                if (password_verify($password, $passwordFromDb)) {
-                    session_start();
-                    $_SESSION['user_id'] = $data['id'];
-                    header("Location: ./catalog");
-                } else {
-                    $errors['password'] = 'Неверный пароль';
-                }
-            }
-        }
-        require_once './get_login.php';
     }
 }

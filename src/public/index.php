@@ -4,57 +4,55 @@ class index
 {
     public function indexPhp()
     {
+        require_once './../Controller/UserController.php';
+        require_once './../Controller/ProductController.php';
+        require_once './../Controller/CartController.php';
         $requestUri = $_SERVER['REQUEST_URI'];
         $requestMethod = $_SERVER['REQUEST_METHOD'];
 
         if ($requestUri === '/login') {
             if ($requestMethod === 'GET') {
-                require_once './get_login.php';
+                $userController = new UserController();
+                $userController->getLoginForm();
             } elseif ($requestMethod === 'POST') {
-                require_once './classes/user.php';
-                $userLog = new user;
-                $userLog->log();
+                $userController = new UserController();
+                $userController->login();
             } else {
                 echo "$requestMethod не поддерживается адресом $requestUri";
             }
         } elseif ($requestUri === '/registrate') {
             if ($requestMethod === 'GET') {
-                require_once './get_registration.php';
+                $userController = new UserController();
+                $userController->getRegistrateForm();
             } elseif ($requestMethod === 'POST') {
-                require_once './classes/user.php';
-                $userReg = new user;
-                $userReg->reg();
+                $userController = new UserController();
+                $userController->registrate();
             }  else {
                 echo "$requestMethod не поддерживается адресом $requestUri";
             }
         } elseif ($requestUri === '/catalog') {
             if ($requestMethod === 'GET') {
-                require_once './classes/catalog.php';
-                $catalog = new catalog;
+                $catalog = new ProductController();
                 $catalog->getCatalog();
             } else {
                 echo "$requestMethod не поддерживается адресом $requestUri";
             }
         } elseif ($requestUri === '/add-product'){
-            if ($requestMethod === 'GET') {
-                require_once './get_catalog.php';
-            } elseif ($requestMethod === "POST") {
-                require_once './classes/catalog.php';
-                $addProduct = new catalog;
-                $addProduct->addProduct();
+            if ($requestMethod === "POST") {
+                $catalog = new ProductController();
+                $catalog->addProduct();
             } else {
                 echo "$requestMethod не поддерживается адресом $requestUri";
             }
         } elseif ($requestUri === '/cart') {
             if ($requestMethod === 'GET') {
-                require_once './classes/catalog.php';
-                $cart = new catalog;
+                $cart = new CartController();
                 $cart->getCart();
             } else {
                 echo "$requestMethod не поддерживается адресом $requestUri";
             }
         } else {
-            require_once './404.php';
+            require_once './../View/404.php';
         }
     }
 
@@ -62,5 +60,3 @@ class index
 
 $start = new index();
 $start->indexPhp();
-
-

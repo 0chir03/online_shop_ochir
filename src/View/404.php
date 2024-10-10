@@ -10,7 +10,7 @@
                 <b> PAGE NOT FOUND </b>
             </div>
             <div class="col-lg-12 text-btn">
-                <a href="index.php"><button name="login" class="btn btn-outline-primary">BACK TO HOME</button></a>
+                <a href="../public/index.php"><button name="login" class="btn btn-outline-primary">BACK TO HOME</button></a>
             </div>
         </div>
         <div class="col-lg-2"></div>

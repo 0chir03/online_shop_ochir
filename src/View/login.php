@@ -7,19 +7,19 @@
                     <?php if (!empty($errors['login'])) {
                         print_r($errors['login']);
                     }?>
-                <input type="login" name="login" id="login" required placeholder="Login">
-                <label style="color: red;font-weight: 600;">
-                    <?php if (!empty($errors['password'])) {
-                        print_r($errors['password']);
-                    }?>
-                <input type="password" name="password" id="password" required placeholder="Password">
-                <div class="options">
-                    <input type="checkbox">
-                    <label for="remember">Remember me!</label>
-                    <a href="#">Forgot password?</a>
-                </div>
-                <button>Login</button>
-                <p>Don't have an account?<br><a href="#">Register</a></p>
+                    <input type="login" name="login" id="login" required placeholder="Login">
+                    <label style="color: red;font-weight: 600;">
+                        <?php if (!empty($errors['password'])) {
+                            print_r($errors['password']);
+                        }?>
+                        <input type="password" name="password" id="password" required placeholder="Password">
+                        <div class="options">
+                            <input type="checkbox">
+                            <label for="remember">Remember me!</label>
+                            <a href="#">Forgot password?</a>
+                        </div>
+                        <button>Login</button>
+                        <p>Don't have an account?<br><a href="#">Register</a></p>
             </form>
         </div>
     </div>

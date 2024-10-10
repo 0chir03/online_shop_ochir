@@ -7,9 +7,9 @@
                     <img class="card-img-top" src="<?php echo $product['image']; ?>" alt="Card image">
                     <div class="card-body">
                         <p class="card-text text-muted"><?php echo $product['name']; ?></p>
-                            <div class="card-footer">
-                                <?php echo $product['price']; ?>
-                            </div>
+                        <div class="card-footer">
+                            <?php echo $product['price']; ?>
+                        </div>
                         <p class="card-text text-muted"><?php echo $product['amount']; ?></p>
                     </div>
                 </a>
