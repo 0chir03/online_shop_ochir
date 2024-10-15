@@ -10,10 +10,10 @@ class UserController
     public function registrate()        //РЕГИСТРАЦИЯ ПОЛЬЗОВАТЕЛЯ (ДОБАВЛЕНИЕ ДАННЫХ В БД)
     {
         $errors = $this->validateReg();
-        $name = $_POST['name'];
-        $email = $_POST['email'];
-        $password = $_POST['psw'];
         if (empty($errors)) {
+            $name = $_POST['name'];
+            $email = $_POST['email'];
+            $password = $_POST['psw'];
             $hash = password_hash($password, PASSWORD_DEFAULT);
             require_once './../Model/User.php';
             $user = new User();
@@ -23,7 +23,7 @@ class UserController
         require_once './../View/registrate.php';
     }
 
-    public function  validateReg()      //ВАЛИДАЦИЯ ДАННЫХ ПРИ РЕГИСТРАЦИИ
+    private function  validateReg()      //ВАЛИДАЦИЯ ДАННЫХ ПРИ РЕГИСТРАЦИИ
     {
         $errors = [];
 
@@ -80,9 +80,9 @@ class UserController
     public function login()       //АУТЕНТИФИКАЦИЯ ПОЛЬЗОВАТЕЛЯ
     {
         $errors = $this->validateLog();
-        $login = $_POST['login'];
-        $password = $_POST['password'];
         if (empty($errors)) {
+            $login = $_POST['login'];
+            $password = $_POST['password'];
             require_once './../Model/User.php';
             $user = new User();
             $data=$user->getByLogin($login);
@@ -103,7 +103,7 @@ class UserController
         require_once './../View/login.php';
     }
 
-    public function validateLog()       //ВАЛИДАЦИЯ ДАННЫХ ПРИ АУТЕНТИФИКАЦИИ
+    private function validateLog()       //ВАЛИДАЦИЯ ДАННЫХ ПРИ АУТЕНТИФИКАЦИИ
     {
         $errors = [];
 

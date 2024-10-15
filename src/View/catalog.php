@@ -1,8 +1,8 @@
 <div class="container">
     <h3>Catalog</h3>
     <div class="card-deck">
-        <?php foreach ($products as $product): ?>
-            <form action="/add-product" method="POST">
+        <?php foreach ($data as $product): ?>
+            <form action="/catalog" method="POST">
                 <div class="card text-center">
                     <a href="#">
                         <img class="card-img-top" src="<?php echo $product['image']?>" alt="Card image">

@@ -1,23 +1,25 @@
 <div class="container">
     <h3>Корзина</h3>
     <div class="card-deck">
-        <?php foreach ($data as $product): ?>
-            <div class="card text-center">
-                <a href="#">
-                    <img class="card-img-top" src="<?php echo $product['image']; ?>" alt="Card image">
-                    <div class="card-body">
-                        <p class="card-text text-muted"><?php echo $product['name']; ?></p>
-                        <div class="card-footer">
-                            <?php echo $product['price']; ?>
-                        </div>
-                        <p class="card-text text-muted"><?php echo $product['amount']; ?></p>
+        <form action="/cart" method="POST">
+                <?php foreach ($data as $product): ?>
+                    <div class="card text-center">
+                        <a href="#">
+                            <img class="card-img-top" src="<?php echo $product['image']; ?>" alt="Card image">
+                            <div class="card-body">
+                                <p class="card-text text-muted"><?php echo $product['name']; ?></p>
+                                <div class="card-footer">
+                                    <?php echo $product['price']; ?>
+                                </div>
+                                <p class="card-text text-muted"><?php echo $product['amount']; ?></p>
+                            </div>
+                        </a>
                     </div>
-                </a>
-            </div>
-        <?php endforeach; ?>
+                <?php endforeach; ?>
+            <button type="submit">Оформить заказ</button>
+        </form>
     </div>
 </div>
-
 <style>
     body {
         font-style: sans-serif;
@@ -58,5 +60,6 @@
         font-weight: bold;
         font-size: 18px;
         background-color: white;
+    }
     }
 </style>
