@@ -1,5 +1,17 @@
 <?php
 
+$autoload = function(string $className) {
+    $path = require_once './../Controller/$className.php';
+    if (file_exists($path)) {
+        require_once $path;
+
+        return true;
+    }
+
+    return false;
+};
+
+spl_autoload_register($autoload);
 
 class App
 {
@@ -65,18 +77,6 @@ class App
 
     public function run()
     {
-        $autoload = function(string $className) {
-            $path = require_once './../Controller/$className.php';
-            if (file_exists($path)) {
-                require_once $path;
-
-                return true;
-            }
-
-            return false;
-        };
-
-        spl_autoload_register($autoload);
 
         $requestUri = $_SERVER['REQUEST_URI'];
         $requestMethod = $_SERVER['REQUEST_METHOD'];
