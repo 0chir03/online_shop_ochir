@@ -1,7 +1,33 @@
 <?php
 
 $autoload = function(string $className) {
-    $path = require_once './../Controller/$className.php';
+    $path = require_once "./../Controller/$className.php";
+    if (file_exists($path)) {
+        require_once $path;
+
+        return true;
+    }
+
+    return false;
+};
+
+spl_autoload_register($autoload);
+
+$autoload = function(string $className) {
+    $path = require_once "./../Model/$className.php";
+    if (file_exists($path)) {
+        require_once $path;
+
+        return true;
+    }
+
+    return false;
+};
+
+spl_autoload_register($autoload);
+
+$autoload = function(string $className) {
+    $path = require_once "./../View/$className.php";
     if (file_exists($path)) {
         require_once $path;
 
