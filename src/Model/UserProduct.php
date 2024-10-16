@@ -25,14 +25,20 @@ class UserProduct
         $stmt->execute(['amount' => $amount, 'userId' => $userId, 'productId' => $productId]);
     }
 
-
-    public function getByUserId(int $userId)
+    public function getByUserId(int $user_id)
     {
         $pdo = new PDO('pgsql:host=postgres;port=5432;dbname=mydb', 'user', 'pass');
-        $stmt = $pdo->prepare("SELECT id FROM user_products WHERE user_id = :userId");
-        $stmt->execute(['userId' => $userId]);
+        $stmt = $pdo->prepare("SELECT * FROM user_products WHERE user_id = :user_id");
+        $stmt->execute(['user_id' => $user_id]);
         $result = $stmt->fetchAll();
         return $result;
+    }
+
+    public function deleteByUserId(int $user_id)
+    {
+        $pdo = new PDO('pgsql:host=postgres;port=5432;dbname=mydb', 'user', 'pass');
+        $stmt = $pdo->prepare("DELETE FROM user_products WHERE user_id = :user_id");
+        $stmt->execute(['user_id' => $user_id]);
     }
 
 }

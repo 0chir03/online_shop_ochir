@@ -27,4 +27,14 @@ class Products
         $price = $stmt->fetchAll();
         return $price;
     }
+
+    public function getByProductId(int $product_id)
+    {
+        $pdo = new PDO('pgsql:host=postgres;port=5432;dbname=mydb', 'user', 'pass');
+        $stmt = $pdo->prepare("SELECT price FROM products INNER JOIN user_products ON products.id = user_products.product_id WHERE user_products.product_id = :product_id");
+        $stmt->execute(['product_id' => $product_id]);
+        $data = $stmt->fetch();
+        return $data;
+    }
+
 }

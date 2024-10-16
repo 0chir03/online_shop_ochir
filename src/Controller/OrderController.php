@@ -1,7 +1,25 @@
 <?php
 
+require_once "./../Model/Products.php";
+require_once "./../Model/Order.php";
+require_once "./../Model/UserProduct.php";
+require_once "./../Model/OrderProduct.php";
+
+
 class OrderController
 {
+    public function getOrder()
+    {
+        session_start();
+        $user_id = $_SESSION['user_id'];
+        $products = new Products();
+        $array = $products -> getPriceAndAmount($user_id);
+        $sum = 0;
+        foreach ($array as $key) {
+            $sum = $sum + $key['price'] * $key['amount'];
+        }
+        require_once './../View/order.php';
+    }
     public function createOrder()
     {
         session_start();
@@ -11,9 +29,33 @@ class OrderController
             $contact_name = $_POST['name'];
             $contact_phone = $_POST['phone'];
             $address = $_POST['address'];
-            $sum = $_POST['sum'];
-            require_once "./../Model/Order.php";
-            $order ->create($contact_name, $contact_phone, $address, $sum, $user_id);
+
+            $products = new Products();
+            $array = $products -> getPriceAndAmount($user_id);
+            $sum = 0;
+            foreach ($array as $key) {
+                $sum = $sum + $key['price'] * $key['amount'];
+            }
+            $order = new Order();
+            $result = $order -> create($contact_name, $contact_phone, $address, $sum, $user_id);
+            $order_id = $result['id'];
+            $user_products = new UserProduct();
+            $product = $user_products -> getByUserId($user_id);
+            $total_price = 0;
+            foreach ($product as $key) {
+                $product_id = $key['product_id'];
+                $amount = $key['amount'];
+
+                $data = $products -> getByProductId($product_id);
+                $price = $data['price'];
+                $total_price = $price * $amount;
+
+                $order_product = new OrderProduct();
+                $order_product -> create($order_id, $product_id, $amount, $total_price);
+
+            }
+            $user_products -> deleteByUserId($user_id);
+            header('Location: ./end_order');
         }
         require_once './../View/order.php';
     }

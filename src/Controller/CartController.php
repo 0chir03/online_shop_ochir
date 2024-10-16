@@ -18,15 +18,6 @@ class CartController
 
     public function getOrder()       //ФОРМА ОФОРМЛЕНИЯ ЗАКАЗА
     {
-        session_start();
-        $user_id = $_SESSION['user_id'];
-        require_once './../Model/Products.php';
-        $products = new Products();
-        $array = $products -> getPriceAndAmount($user_id);
-        $sum = 0;
-        foreach ($array as $key) {
-            $sum = $sum + $key['price'] * $key['amount'];
-        }
-        require_once './../View/order.php';
+        header("Location: ./order");
     }
 }

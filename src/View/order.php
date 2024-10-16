@@ -24,7 +24,10 @@
                 </label>
                 <input type="search" placeholder="Укажите улицу, дом и квартиру" name="address" class="guest"/></label><p></p>
             <label><span class="sum"> Сумма заказа:</span><br />
-                <input type="search" name="sum" class="guest"/></label><p></p>
+                </label><p></p>
+            <label style="color: black;font-weight: 600;">
+                <?php echo $sum ?>
+            </label>
             </select><p></p>
             <div class="bottom">
                 <input type="submit" class="bottom1" value="Оформить"/></div>

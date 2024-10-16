@@ -1,69 +1,95 @@
 <?php
 
 
-require_once './../Controller/UserController.php';
-require_once './../Controller/ProductController.php';
-require_once './../Controller/CartController.php';
-require_once './../Controller/OrderController.php';
-
 class App
 {
+    private array $routes = [
+        '/login' => [
+            'GET' => [
+                'class' => 'UserController',
+                'method' => 'getLoginForm',
+            ],
+            'POST' => [
+                'class' => 'UserController',
+                'method' => 'login',
+            ]
+        ],
+        '/registrate' => [
+            'GET' => [
+                'class' => 'UserController',
+                'method' => 'getRegistrateForm',
+            ],
+            'POST' => [
+                'class' => 'UserController',
+                'method' => 'registrate',
+            ]
+        ],
+        '/catalog' => [
+            'GET' => [
+                'class' => 'ProductController',
+                'method' => 'getCatalog',
+            ],
+            'POST' => [
+                'class' => 'ProductController',
+                'method' => 'addProduct',
+            ]
+        ],
+        '/cart' => [
+            'GET' => [
+                'class' => 'CartController',
+                'method' => 'getCart',
+            ],
+            'POST' => [
+                'class' => 'CartController',
+                'method' => 'getOrder',
+            ]
+        ],
+        '/order' => [
+            'GET' => [
+                'class' => 'OrderController',
+                'method' => 'getOrder',
+            ],
+            'POST' => [
+                'class' => 'OrderController',
+                'method' => 'createOrder',
+            ]
+        ],
+        '/end_order' => [
+            'GET' => [
+                'class' => 'EndOrderController',
+                'method' => 'getForm',
+            ],
+        ],
+    ];
+
+
     public function run()
     {
+        $autoload = function(string $className) {
+            $path = require_once './../Controller/$className.php';
+            if (file_exists($path)) {
+                require_once $path;
+
+                return true;
+            }
+
+            return false;
+        };
+
+        spl_autoload_register($autoload);
+
         $requestUri = $_SERVER['REQUEST_URI'];
         $requestMethod = $_SERVER['REQUEST_METHOD'];
 
-        if ($requestUri === '/login') {
-            if ($requestMethod === 'GET') {
-                $userController = new UserController();
-                $userController->getLoginForm();
-            } elseif ($requestMethod === 'POST') {
-                $userController = new UserController();
-                $userController->login();
+        if (array_key_exists($requestUri, $this->routes)) {
+            if (array_key_exists($requestMethod, $this->routes[$requestUri])) {
+                $class = new $this->routes[$requestUri][$requestMethod]['class'];
+                $method = $this->routes[$requestUri][$requestMethod]['method'];
+                $class->$method();
             } else {
                 echo "$requestMethod не поддерживается адресом $requestUri";
             }
-        } elseif ($requestUri === '/registrate') {
-            if ($requestMethod === 'GET') {
-                $userController = new UserController();
-                $userController->getRegistrateForm();
-            } elseif ($requestMethod === 'POST') {
-                $userController = new UserController();
-                $userController->registrate();
-            }  else {
-                echo "$requestMethod не поддерживается адресом $requestUri";
-            }
-        } elseif ($requestUri === '/catalog') {
-            if ($requestMethod === 'GET') {
-                $catalog = new ProductController();
-                $catalog->getCatalog();
-            } elseif ($requestMethod === "POST") {
-                    $catalog = new ProductController();
-                    $catalog->addProduct();
-            } else {
-                echo "$requestMethod не поддерживается адресом $requestUri";
-            }
-        } elseif ($requestUri === '/cart') {
-            if ($requestMethod === 'GET') {
-                $cart = new CartController();
-                $cart->getCart();
-            } elseif ($requestMethod === 'POST') {
-                $cart = new CartController();
-                $cart->getOrder();
-            } else {
-                echo "$requestMethod не поддерживается адресом $requestUri";
-            }
-        } elseif ($requestUri === '/order') {
-            if ($requestMethod === 'POST') {
-                $order = new OrderController();
-                $order->createOrder();
-            } else {
-                echo "$requestMethod не поддерживается адресом $requestUri";
-            }
-
-
-        }
-        else {
+        } else {
             require_once './../View/404.php';
         }
     }
