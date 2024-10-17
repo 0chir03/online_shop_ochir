@@ -1,5 +1,9 @@
 <?php
 
+namespace Controller;
+
+use Model\User;
+
 class UserController
 {
 
@@ -15,7 +19,6 @@ class UserController
             $email = $_POST['email'];
             $password = $_POST['psw'];
             $hash = password_hash($password, PASSWORD_DEFAULT);
-            require_once './../Model/User.php';
             $user = new User();
             $user->create($name, $email, $hash);
             header("Location: /login");
@@ -83,7 +86,6 @@ class UserController
         if (empty($errors)) {
             $login = $_POST['login'];
             $password = $_POST['password'];
-            require_once './../Model/User.php';
             $user = new User();
             $data=$user->getByLogin($login);
             if ($data === false) {

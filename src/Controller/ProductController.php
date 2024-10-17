@@ -1,5 +1,10 @@
 <?php
 
+namespace Controller;
+
+use Model\Products;
+use Model\UserProduct;
+
 class ProductController
 {
 
@@ -10,7 +15,6 @@ class ProductController
         if (!isset($_SESSION['user_id'])) {
             header("Location: ./login");
         } else {
-          require_once "./../Model/Products.php";
           $products = new Products();
           $data = $products->getProducts();
         }
@@ -26,7 +30,6 @@ class ProductController
             $userId = $_SESSION['user_id'];
             $productId = $_POST['product_id'];
             $amount = $_POST['amount'];
-            require_once "./../Model/UserProduct.php";
             $userProduct = new UserProduct();
             $result = $userProduct->getByUserIdAndProductId($userId, $productId);
             if (empty($result)) {

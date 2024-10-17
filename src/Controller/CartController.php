@@ -1,5 +1,8 @@
 <?php
 
+namespace Controller;
+
+use Model\Products;
 
 class CartController
 {
@@ -10,7 +13,6 @@ class CartController
         if (!isset($user_id)) {
             header("Location: ./login");
         } else {
-            require_once './../Model/Products.php';
             $products = new Products();
             $data = $products->getByUserId($user_id);
         }

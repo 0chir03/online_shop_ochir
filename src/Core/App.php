@@ -1,100 +1,69 @@
 <?php
 
-$autoload = function(string $className) {
-    $path = require_once "./../Controller/$className.php";
-    if (file_exists($path)) {
-        require_once $path;
+namespace Core;
 
-        return true;
-    }
-
-    return false;
-};
-
-spl_autoload_register($autoload);
-
-$autoload = function(string $className) {
-    $path = require_once "./../Model/$className.php";
-    if (file_exists($path)) {
-        require_once $path;
-
-        return true;
-    }
-
-    return false;
-};
-
-spl_autoload_register($autoload);
-
-$autoload = function(string $className) {
-    $path = require_once "./../View/$className.php";
-    if (file_exists($path)) {
-        require_once $path;
-
-        return true;
-    }
-
-    return false;
-};
-
-spl_autoload_register($autoload);
+use Controller\UserController;
+use Controller\ProductController;
+use Controller\CartController;
+use Controller\OrderController;
+use Controller\EndOrderController;
 
 class App
 {
     private array $routes = [
         '/login' => [
             'GET' => [
-                'class' => 'UserController',
+                'class' => UserController::class,
                 'method' => 'getLoginForm',
             ],
             'POST' => [
-                'class' => 'UserController',
+                'class' => UserController::class,
                 'method' => 'login',
             ]
         ],
         '/registrate' => [
             'GET' => [
-                'class' => 'UserController',
+                'class' => UserController::class,
                 'method' => 'getRegistrateForm',
             ],
             'POST' => [
-                'class' => 'UserController',
+                'class' => UserController::class,
                 'method' => 'registrate',
             ]
         ],
         '/catalog' => [
             'GET' => [
-                'class' => 'ProductController',
+                'class' => ProductController::class,
                 'method' => 'getCatalog',
             ],
             'POST' => [
-                'class' => 'ProductController',
+                'class' => ProductController::class,
                 'method' => 'addProduct',
             ]
         ],
         '/cart' => [
             'GET' => [
-                'class' => 'CartController',
+                'class' => CartController::class,
                 'method' => 'getCart',
             ],
             'POST' => [
-                'class' => 'CartController',
+                'class' => CartController::class,
                 'method' => 'getOrder',
             ]
         ],
         '/order' => [
             'GET' => [
-                'class' => 'OrderController',
+                'class' => OrderController::class,
                 'method' => 'getOrder',
             ],
             'POST' => [
-                'class' => 'OrderController',
+                'class' => OrderController::class,
                 'method' => 'createOrder',
             ]
         ],
         '/end_order' => [
             'GET' => [
-                'class' => 'EndOrderController',
+                'class' => EndOrderController::class,
                 'method' => 'getForm',
             ],
         ],
