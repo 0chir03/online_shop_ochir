@@ -2,7 +2,7 @@
 
 namespace Controller;
 
-use Model\Products;
+use Model\Product;
 use Model\Order;
 use Model\UserProduct;
 use Model\OrderProduct;
@@ -19,11 +19,11 @@ class OrderController
         }
 
         $user_id = $_SESSION['user_id'];
-        $products = new Products();
+        $products = new Product();
         $array = $products->getByUserId($user_id);
         $sum = 0;
         foreach ($array as $key) {
-            $sum = $sum + $key['price'] * $key['amount'];
+            $sum = $sum + $key->getPrice() * $key->getAmount();
         }
         require_once './../View/order.php';
     }
@@ -37,11 +37,11 @@ class OrderController
             $contact_phone = $_POST['phone'];
             $address = $_POST['address'];
 
-            $products = new Products();
+            $products = new Product();
             $array = $products->getByUserId($user_id);
             $sum = 0;
             foreach ($array as $key) {
-                $sum = $sum + $key['price'] * $key['amount'];
+                $sum = $sum + $key->getPrice() * $key->getAmount();
             }
             $order = new Order();
             $result = $order->create($contact_name, $contact_phone, $address, $sum, $user_id);
@@ -49,12 +49,12 @@ class OrderController
             $user_products = new UserProduct();
             $product = $user_products->getByUserId($user_id);
             $total_price = 0;
-            foreach ($product as $key) {
-                $product_id = $key['product_id'];
-                $amount = $key['amount'];
+            foreach ($product as $item) {
+                $product_id = $item->getProduct();
+                $amount = $item->getAmount();
 
                 $data = $products->getByProductId($product_id);
-                $price = $data['price'];
+                $price = $data->getPrice();
                 $total_price = $price * $amount;
 
                 $order_product = new OrderProduct();

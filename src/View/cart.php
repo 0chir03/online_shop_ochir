@@ -5,13 +5,13 @@
                 <?php foreach ($data as $product): ?>
                     <div class="card text-center">
                         <a href="#">
-                            <img class="card-img-top" src="<?php echo $product['image']; ?>" alt="Card image">
+                            <img class="card-img-top" src="<?php echo $product->getImage(); ?>" alt="Card image">
                             <div class="card-body">
-                                <p class="card-text text-muted"><?php echo $product['name']; ?></p>
+                                <p class="card-text text-muted"><?php echo $product->getName(); ?></p>
                                 <div class="card-footer">
-                                    <?php echo $product['price']; ?>
+                                    <?php echo $product->getPrice(); ?>
                                 </div>
-                                <p class="card-text text-muted"><?php echo $product['amount']; ?></p>
+                                <p class="card-text text-muted"><?php echo $product->getAmount(); ?></p>
                             </div>
                         </a>
                     </div>

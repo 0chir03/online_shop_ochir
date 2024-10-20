@@ -2,7 +2,7 @@
 
 namespace Controller;
 
-use Model\Products;
+use Model\Product;
 use Model\UserProduct;
 
 class ProductController
@@ -15,7 +15,7 @@ class ProductController
         if (!isset($_SESSION['user_id'])) {
             header("Location: ./login");
         } else {
-          $products = new Products();
+          $products = new Product();
           $data = $products->getProducts();
         }
 
@@ -32,7 +32,7 @@ class ProductController
             $amount = $_POST['amount'];
             $userProduct = new UserProduct();
             $result = $userProduct->getByUserIdAndProductId($userId, $productId);
-            if (empty($result)) {
+            if ($result === null) {
                 $userProduct->insert($userId, $productId, $amount);
             } else {
                 $userProduct->updateAmount($userId, $productId, $amount);

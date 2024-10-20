@@ -88,14 +88,14 @@ class UserController
             $password = $_POST['password'];
             $user = new User();
             $data=$user->getByLogin($login);
-            if ($data === false) {
+            if ($data === null) {
                 $errors['login'] = "Неверный логин или пароль";
             } else {
-                $passwordFromDb = $data['password'];
+                $passwordFromDb = $data->getPassword();
 
                 if (password_verify($password, $passwordFromDb)) {
                     session_start();
-                    $_SESSION['user_id'] = $data['id'];
+                    $_SESSION['user_id'] = $data->getId();
                     header("Location: ./catalog");
                 } else {
                     $errors['password'] = 'Неверный пароль';

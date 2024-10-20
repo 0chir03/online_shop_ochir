@@ -5,11 +5,11 @@
             <form action="/catalog" method="POST">
                 <div class="card text-center">
                     <a href="#">
-                        <img class="card-img-top" src="<?php echo $product['image']?>" alt="Card image">
+                        <img class="card-img-top" src="<?php echo $product->getImage();?>" alt="Card image">
                         <div class="card-body">
-                            <p class="card-text text-muted"><?php echo $product['name']; ?></p>
+                            <p class="card-text text-muted"><?php echo $product->getName(); ?></p>
                             <div class="card-footer">
-                                <?php echo $product['price']; ?>
+                                <?php echo $product->getPrice(); ?>
                             </div>
                         </div>
                         <label style="color: red;">
@@ -17,7 +17,7 @@
                                 print_r($errors['product_id']);
                             }?>
                         </label>
-                        <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>" id="product_id" required>
+                        <input type="hidden" name="product_id" value="<?php echo $product->getId(); ?>" id="product_id" required>
                         <label for="amount"><b>Amount</b></label>
                         <label style="color: red">
                             <?php if (!empty($errors['amount'])) {

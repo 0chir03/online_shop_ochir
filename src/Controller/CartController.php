@@ -2,7 +2,7 @@
 
 namespace Controller;
 
-use Model\Products;
+use Model\Product;
 
 class CartController
 {
@@ -13,7 +13,7 @@ class CartController
         if (!isset($user_id)) {
             header("Location: ./login");
         } else {
-            $products = new Products();
+            $products = new Product();
             $data = $products->getByUserId($user_id);
         }
         require_once "./../View/cart.php";
