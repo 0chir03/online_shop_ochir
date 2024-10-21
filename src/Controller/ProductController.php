@@ -3,12 +3,19 @@
 namespace Controller;
 
 use Model\Product;
-use Model\UserProduct;
 use Request\AddProductRequest;
+use Service\AddProductService;
+use DTO\CreateAddProductDTO;
 
 class ProductController
 {
 
+    private AddProductService $addProductService;
+
+    public function __construct()
+    {
+        $this->addProductService = new AddProductService();
+    }
     public function getCatalog()        //ВЫВОД КАТАЛОГА
     {
         session_start();
@@ -31,13 +38,11 @@ class ProductController
             $userId = $_SESSION['user_id'];
             $productId = $request->getProductId();
             $amount = $request->getAmount();
-            $userProduct = new UserProduct();
-            $result = $userProduct->getByUserIdAndProductId($userId, $productId);
-            if ($result === null) {
-                $userProduct->insert($userId, $productId, $amount);
-            } else {
-                $userProduct->updateAmount($userId, $productId, $amount);
-            }
+
+            $dto = new CreateAddProductDTO($userId, $productId, $amount);
+
+            $this->addProductService->add($dto);
+
             header("Location: ./cart");
         }
         require_once "./../View/catalog.php";
