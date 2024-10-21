@@ -2,6 +2,8 @@
 
 namespace Core;
 
+use Request\Request;
+
 class App
 {
     private array $routes = [];
@@ -18,9 +20,17 @@ class App
            if (isset($route[$requestMethod])) {
                $controllerClassName = $route[$requestMethod]['class'];
                $method = $route[$requestMethod]['method'];
+               $requestClass = $route[$requestMethod]['request'];
+
+               if (!empty($requestClass)) {
+                   $request = new $requestClass($requestUri, $requestMethod, $_POST);
+               } else {
+                   $request = new Request($requestUri, $requestMethod, $_POST);
+               }
 
                $class = new $controllerClassName();
-               return $class->$method();
+
+               return $class->$method($request);
            } else {
                echo "$requestMethod не поддерживается адресом $requestUri";
            }
@@ -30,11 +40,12 @@ class App
     }
 
 
-    public function addRoute(string $route, string $method, string $className, string $methodName)
+    public function addRoute(string $route, string $method, string $className, string $methodName, string $requestClass = null)
     {
        $this->routes[$route][$method] = [
             'class' => $className,
             'method' => $methodName,
+            'request' => $requestClass,
         ];
     }
 }

@@ -24,16 +24,34 @@ class User extends Model
         $data = $stmt->fetch();
         if (empty($data)) {
             return null;
-        } else {
-            $obj = new self();
-            $obj->id = $data['id'];
-            $obj->name = $data['name'];
-            $obj->email = $data['email'];
-            $obj->password = $data['password'];
         }
+        $obj = new self();
+        $obj->id = $data['id'];
+        $obj->name = $data['name'];
+        $obj->email = $data['email'];
+        $obj->password = $data['password'];
+
         return $obj;
     }
 
+    public function getById (string $userId)
+    {
+        $stmt = $this->pdo->prepare("SELECT * FROM users WHERE id = :userId");
+        $stmt->execute(['userId' => $userId]);
+        $data = $stmt->fetch();
+
+        if (empty($data)) {
+            return null;
+        }
+
+        $obj = new self();
+        $obj->id = $data['id'];
+        $obj->name = $data['name'];
+        $obj->email = $data['email'];
+        $obj->password = $data['password'];
+
+        return $obj;
+    }
 
 
     public function getId(): int
@@ -59,21 +77,6 @@ class User extends Model
     public function getLogin(): string
     {
         return $this->login;
-    }
-
-    public function getById (string $userId)
-    {
-        $stmt = $this->pdo->prepare("SELECT * FROM users WHERE id = :userId");
-        $stmt->execute(['userId' => $userId]);
-        $data = $stmt->fetch();
-
-        if (empty($data)) {
-            return null;
-        } else {
-            $obj = new self();
-            $obj->id = $data['id'];
-        }
-        return $obj;
     }
 
 }

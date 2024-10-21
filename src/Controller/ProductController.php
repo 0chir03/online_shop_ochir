@@ -4,6 +4,7 @@ namespace Controller;
 
 use Model\Product;
 use Model\UserProduct;
+use Request\AddProductRequest;
 
 class ProductController
 {
@@ -22,14 +23,14 @@ class ProductController
         require_once "./../View/catalog.php";
     }
 
-    public function addProduct()        //ДОБАВЛЕНИЕ ПРОДУКТА В КОРЗИНУ
+    public function addProduct(AddProductRequest $request)        //ДОБАВЛЕНИЕ ПРОДУКТА В КОРЗИНУ
     {
         session_start();
-        $errors = $this->validateProduct();
+        $errors = $request->validate();
         if (empty($errors)) {
             $userId = $_SESSION['user_id'];
-            $productId = $_POST['product_id'];
-            $amount = $_POST['amount'];
+            $productId = $request->getProductId();
+            $amount = $request->getAmount();
             $userProduct = new UserProduct();
             $result = $userProduct->getByUserIdAndProductId($userId, $productId);
             if ($result === null) {
@@ -40,24 +41,6 @@ class ProductController
             header("Location: ./cart");
         }
         require_once "./../View/catalog.php";
-    }
-
-    private function validateProduct()       //ВАЛИДАЦИЯ ПРОДУКТА
-    {
-        $errors = [];
-
-        if (!isset($_SESSION['user_id'])) {
-            header('Location: ./login');
-        }
-
-        if (empty($_POST['product_id'])) {
-            $errors['product_id'] = 'Выберите продукт';
-        }
-
-        if (empty($_POST['amount'])) {
-            $errors['amount'] = 'Укажите необходимое количество продукта';
-        }
-        return $errors;
     }
 
 }

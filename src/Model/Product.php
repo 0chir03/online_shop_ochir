@@ -20,19 +20,16 @@ class Product extends Model
 
         if (empty($result)) {
             return null;
-        } else {
-            $array = [];
-            $key = 0;
-            foreach ($result as $item) {
-                $obj = new self();
-                $obj->id = $item['id'];
-                $obj->name = $item['name'];
-                $obj->description = $item['description'];
-                $obj->price = $item['price'];
-                $obj->image = $item['image'];
-                $array[$key] = $obj;
-                $key++;
-            }
+        }
+        $array = [];
+        foreach ($result as $item) {
+            $obj = new self();
+            $obj->id = $item['id'];
+            $obj->name = $item['name'];
+            $obj->description = $item['description'];
+            $obj->price = $item['price'];
+            $obj->image = $item['image'];
+            $array[] = $obj;
         }
         return $array;
     }
@@ -45,23 +42,19 @@ class Product extends Model
 
         if (empty($data)) {
             return null;
-        } else {
-            $array = [];
-            $key = 0;
-            foreach ($data as $item) {
-                $obj = new self();
-                $obj->id = $item['id'];
-                $obj->name = $item['name'];
-                $obj->price = $item['price'];
-                $obj->image = $item['image'];
-                $obj->user_id = $item['user_id'];
-                $obj->product_id = $item['product_id'];
-                $obj->amount = $item['amount'];
-                $array[$key] = $obj;
-                $key++;
-            }
         }
-
+        $array = [];
+        foreach ($data as $item) {
+            $obj = new self();
+            $obj->id = $item['id'];
+            $obj->name = $item['name'];
+            $obj->price = $item['price'];
+            $obj->image = $item['image'];
+            $obj->user_id = $item['user_id'];
+            $obj->product_id = $item['product_id'];
+            $obj->amount = $item['amount'];
+            $array[] = $obj;
+        }
         return $array;
     }
 
@@ -73,10 +66,10 @@ class Product extends Model
 
         if (empty($data)) {
             return null;
-        } else {
-            $obj = new self();
-            $obj->price = $data['price'];
         }
+        $obj = new self();
+        $obj->price = $data['price'];
+
         return $obj;
     }
 
@@ -88,10 +81,19 @@ class Product extends Model
 
         if (empty($data)) {
             return null;
-        } else {
-            $obj = new self();
-            $obj->product_id = $data['id'];
         }
+        return $this->hydrate($data);
+    }
+
+    private function hydrate(array $data): self
+    {
+        $obj = new self();
+        $obj->id = $data['id'];
+        $obj->name = $data['name'];
+        $obj->description = $data['description'];
+        $obj->price = $data['price'];
+        $obj->image = $data['image'];
+
         return $obj;
     }
     public function getId(): int

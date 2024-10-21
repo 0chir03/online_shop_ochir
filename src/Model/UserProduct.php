@@ -9,7 +9,7 @@ class UserProduct extends Model
     private Product $product;
     private int $amount;
 
-    public function getByUserIdAndProductId(int $userId, int $productId): ?UserProduct
+    public function getByUserIdAndProductId(int $userId, int $productId): ?array
     {
         $stmt = $this->pdo->prepare("SELECT * FROM user_products WHERE user_id = :userId AND product_id = :productId");
         $stmt->execute(['userId' => $userId, 'productId' => $productId]);
@@ -17,9 +17,8 @@ class UserProduct extends Model
 
         if (empty($data)) {
             return null;
-        } else {
-            return $this->hydrate($data);
         }
+        return $this->hydrate($data);
     }
 
     public function insert(int $userId, int $productId, int $amount)
@@ -34,7 +33,7 @@ class UserProduct extends Model
         $stmt->execute(['amount' => $amount, 'userId' => $userId, 'productId' => $productId]);
     }
 
-    public function getByUserId(int $user_id): ?UserProduct
+    public function getByUserId(int $user_id): ?array
     {
         $stmt = $this->pdo->prepare("SELECT * FROM user_products WHERE user_id = :user_id");
         $stmt->execute(['user_id' => $user_id]);
@@ -42,9 +41,8 @@ class UserProduct extends Model
 
         if (empty($data)) {
             return null;
-        } else {
-            return $this->hydrate($data);
         }
+        return $this->hydrate($data);
     }
 
     public function deleteByUserId(int $user_id)
@@ -53,8 +51,9 @@ class UserProduct extends Model
         $stmt->execute(['user_id' => $user_id]);
     }
 
-    private function hydrate(array $data): self
+    private function hydrate(array $data): array
     {
+        $array = [];
         foreach ($data as $item) {
             $obj = new self();
             $obj->id = $item['id'];
@@ -70,8 +69,9 @@ class UserProduct extends Model
             $obj->product = $product;
 
             $obj->amount = $item['amount'];
+            $array[] = $obj;
         }
-        return $obj;
+        return $array;
     }
 
     public function getId(): int
