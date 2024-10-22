@@ -29,12 +29,24 @@ class App
                }
 
                $class = new $controllerClassName();
+               try {
+                   return $class->$method($request);
+               } catch (\Throwable $exception) {
+                   $message = $exception->getMessage();
+                   $file = $exception->getFile();
+                   $line = $exception->getLine();
+                   $log = "\n".date('Y-m-d H:i:s')."\n".$message."\n".$file."\n".$line;
 
-               return $class->$method($request);
+                   file_put_contents(__DIR__ . '../Storage/Log/error.txt', $log, FILE_APPEND);
+
+                   http_response_code(500);
+                   require_once "./../View/500.php";
+               }
            } else {
                echo "$requestMethod не поддерживается адресом $requestUri";
            }
         } else {
+            http_response_code(404);
             require_once './../View/404.php';
         }
     }

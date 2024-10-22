@@ -3,11 +3,13 @@
 namespace Service;
 
 use DTO\CreateOrderDTO;
+use Model\Model;
 use Model\Order;
 use Model\OrderProduct;
 use Model\Product;
 use Model\UserProduct;
-class OrderService
+
+class OrderService extends Model
 {
     private Order $order;
     private Product $product;
@@ -20,35 +22,45 @@ class OrderService
         $this->product = new Product();
         $this->userProduct = new UserProduct();
         $this->orderProduct = new OrderProduct();
+        parent::__construct();
     }
 
     public function create(CreateOrderDTO $orderDTO)
     {
+        $this->pdo->beginTransaction();
 
-        $array = $this->product->getByUserId($orderDTO->getUserId());
-        $sum = 0;
-        foreach ($array as $key) {
-            $sum = $sum + $key->getPrice() * $key->getAmount();
-        }
+       try {
 
-        $order_id = $this->order->create($orderDTO->getContactName(),
-                                         $orderDTO->getContactPhone(),
-                                         $orderDTO->getAddress(),
-                                         $orderDTO->getUserId(),
-                                         $sum
-                                        );
+           $array = $this->product->getByUserId($orderDTO->getUserId());
+           $sum = 0;
+           foreach ($array as $key) {
+               $sum = $sum + $key->getPrice() * $key->getAmount();
+           }
 
-        $data = $this->userProduct->getByUserId($orderDTO->getUserId());
+           $order_id = $this->order->create($orderDTO->getContactName(),
+               $orderDTO->getContactPhone(),
+               $orderDTO->getAddress(),
+               $orderDTO->getUserId(),
+               $sum
+           );
 
-        foreach ($data as $item) {
-            $product = $item->getProduct();
-            $product_id = $product->getId();
-            $price = $product->getPrice();
-            $amount = $item->getAmount();
-            $total_price = $price * $amount;
+           $data = $this->userProduct->getByUserId($orderDTO->getUserId());
 
-            $this->orderProduct->create($order_id, $product_id, $amount, $total_price);
-        }
-        $this->userProduct->deleteByUserId($orderDTO->getUserId());
+           foreach ($data as $item) {
+               $product = $item->getProduct();
+               $product_id = $product->getId();
+               $price = $product->getPrice();
+               $amount = $item->getAmount();
+               $total_price = $price * $amount;
+
+               $this->orderProduct->create($order_id, $product_id, $amount, $total_price);
+           }
+           $this->userProduct->deleteByUserId($orderDTO->getUserId());
+       } catch (\PDOException $exception) {
+
+           $this->pdo->rollBack();
+           throw $exception;
+       }
+       $this->pdo->commit();
     }
 }
