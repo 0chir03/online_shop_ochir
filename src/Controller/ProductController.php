@@ -4,17 +4,17 @@ namespace Controller;
 
 use Model\Product;
 use Request\AddProductRequest;
-use Service\AddProductService;
-use DTO\CreateAddProductDTO;
+use Service\CartService;
+
 
 class ProductController
 {
 
-    private AddProductService $addProductService;
+    private CartService $cartService;
 
     public function __construct()
     {
-        $this->addProductService = new AddProductService();
+        $this->cartService = new CartService();
     }
     public function getCatalog()        //ВЫВОД КАТАЛОГА
     {
@@ -39,9 +39,7 @@ class ProductController
             $productId = $request->getProductId();
             $amount = $request->getAmount();
 
-            $dto = new CreateAddProductDTO($userId, $productId, $amount);
-
-            $this->addProductService->add($dto);
+            $this->cartService->add($userId, $productId, $amount);
 
             header("Location: ./cart");
         }
