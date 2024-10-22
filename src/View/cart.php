@@ -9,7 +9,7 @@
                             <div class="card-body">
                                 <p class="card-text text-muted"><?php echo $product->getName(); ?></p>
                                 <div class="card-footer">
-                                    <?php echo $product->getPrice(); ?>
+                                    <?php echo $product->getPrice() * $product->getAmount(); ?>
                                 </div>
                                 <p class="card-text text-muted"><?php echo $product->getAmount(); ?></p>
                             </div>
