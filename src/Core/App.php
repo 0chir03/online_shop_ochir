@@ -3,6 +3,7 @@
 namespace Core;
 
 use Request\Request;
+use Service\LoggerService;
 
 class App
 {
@@ -32,12 +33,9 @@ class App
                try {
                    return $class->$method($request);
                } catch (\Throwable $exception) {
-                   $message = $exception->getMessage();
-                   $file = $exception->getFile();
-                   $line = $exception->getLine();
-                   $log = "\n".date('Y-m-d H:i:s')."\n".$message."\n".$file."\n".$line;
 
-                   file_put_contents(__DIR__ . '../Storage/Log/error.txt', $log, FILE_APPEND);
+                   $loggerService = new LoggerService($exception);
+                   $loggerService->log();
 
                    http_response_code(500);
                    require_once "./../View/500.php";
