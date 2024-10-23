@@ -13,7 +13,7 @@ class Product extends Model
     private int $product_id;
     private int $amount;
 
-    public function getProducts(): ?array
+    public static function getProducts(): ?array
     {
         $stmt = self::getPDO()->query("SELECT * FROM products");
         $result = $stmt->fetchAll();
@@ -34,7 +34,7 @@ class Product extends Model
         return $array;
     }
 
-    public function getByUserId(int $user_id): ?array
+    public static function getByUserId(int $user_id): ?array
     {
         $stmt = self::getPDO()->prepare("SELECT * FROM products INNER JOIN user_products ON products.id = user_products.product_id WHERE user_products.user_id = :user_id");
         $stmt->execute(['user_id' => $user_id]);
@@ -58,7 +58,7 @@ class Product extends Model
         return $array;
     }
 
-    public function getByProductId(int $product_id): ?Product
+    public static function getByProductId(int $product_id): ?Product
     {
         $stmt = self::getPDO()->prepare("SELECT price FROM products INNER JOIN user_products ON products.id = user_products.product_id WHERE user_products.product_id = :product_id");
         $stmt->execute(['product_id' => $product_id]);
@@ -73,7 +73,7 @@ class Product extends Model
         return $obj;
     }
 
-    public function getByProdId(int $productId): ?Product
+    public static function getByProdId(int $productId): ?Product
     {
         $stmt = self::getPDO()->prepare("SELECT * FROM products WHERE id = :productId");
         $stmt->execute(['productId' => $productId]);
@@ -82,10 +82,10 @@ class Product extends Model
         if (empty($data)) {
             return null;
         }
-        return $this->hydrate($data);
+        return self::hydrate($data);
     }
 
-    private function hydrate(array $data): self
+    private static function hydrate(array $data): self
     {
         $obj = new self();
         $obj->id = $data['id'];

@@ -9,7 +9,7 @@ class UserProduct extends Model
     private Product $product;
     private int $amount;
 
-    public function getByUserIdAndProductId(int $userId, int $productId): ?array
+    public static function getByUserIdAndProductId(int $userId, int $productId): ?array
     {
         $stmt = self::getPDO()->prepare("SELECT * FROM user_products WHERE user_id = :userId AND product_id = :productId");
         $stmt->execute(['userId' => $userId, 'productId' => $productId]);
@@ -18,22 +18,22 @@ class UserProduct extends Model
         if (empty($data)) {
             return null;
         }
-        return $this->hydrate($data);
+        return self::hydrate($data);
     }
 
-    public function insert(int $userId, int $productId, int $amount)
+    public static function insert(int $userId, int $productId, int $amount)
     {
         $stmt = self::getPDO()->prepare("INSERT INTO user_products (user_id, product_id, amount) VALUES (:userId, :productId, :amount)");
         $stmt->execute(['userId' => $userId, 'productId' => $productId, 'amount' => $amount]);
     }
 
-    public function updateAmount($userId, $productId, $amount,)
+    public static function updateAmount($userId, $productId, $amount,)
     {
         $stmt = self::getPDO()->prepare("UPDATE user_products SET amount = amount + :amount WHERE user_id = :userId AND product_id = :productId");
         $stmt->execute(['amount' => $amount, 'userId' => $userId, 'productId' => $productId]);
     }
 
-    public function getByUserId(int $user_id): ?array
+    public static function getByUserId(int $user_id): ?array
     {
         $stmt = self::getPDO()->prepare("SELECT * FROM user_products WHERE user_id = :user_id");
         $stmt->execute(['user_id' => $user_id]);
@@ -42,16 +42,16 @@ class UserProduct extends Model
         if (empty($data)) {
             return null;
         }
-        return $this->hydrate($data);
+        return self::hydrate($data);
     }
 
-    public function deleteByUserId(int $user_id)
+    public static function deleteByUserId(int $user_id)
     {
         $stmt = self::getPDO()->prepare("DELETE FROM user_products WHERE user_id = :user_id");
         $stmt->execute(['user_id' => $user_id]);
     }
 
-    private function hydrate(array $data): array
+    private static function hydrate(array $data): array
     {
         $array = [];
         foreach ($data as $item) {

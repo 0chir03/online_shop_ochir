@@ -11,13 +11,13 @@ class User extends Model
     private string $password;
 
 
-    public function create (string $name, string $email, string $password)
+    public static function create (string $name, string $email, string $password)
     {
         $stmt = self::getPDO()->prepare("INSERT INTO users (name, email, password) VALUES (:name, :email, :password)");
         $stmt->execute(['name' => $name, 'email' => $email, 'password' => $password]);
     }
 
-    public function getByLogin (string $login): ?User
+    public static function getByLogin (string $login)
     {
         $stmt = self::getPDO()->prepare("SELECT * FROM users WHERE email = :login");
         $stmt->execute(['login' => $login]);
@@ -34,7 +34,7 @@ class User extends Model
         return $obj;
     }
 
-    public function getById (string $userId)
+    public static function getById (string $userId)
     {
         $stmt = self::getPDO()->prepare("SELECT * FROM users WHERE id = :userId");
         $stmt->execute(['userId' => $userId]);
@@ -72,11 +72,6 @@ class User extends Model
     public function getPassword(): string
     {
         return $this->password;
-    }
-
-    public function getLogin(): string
-    {
-        return $this->login;
     }
 
 }
