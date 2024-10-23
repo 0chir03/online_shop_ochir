@@ -5,10 +5,10 @@ namespace DTO;
 class CreateOrderDTO
 {
     public function __construct(
-        private string $contact_name,
-        private int $contact_phone,
+        private string $contactName,
+        private int $contactPhone,
         private string $address,
-        private int $user_id,
+        private int $userId,
     )
     {
 
@@ -16,12 +16,12 @@ class CreateOrderDTO
 
     public function getContactName(): string
     {
-        return $this->contact_name;
+        return $this->contactName;
     }
 
     public function getContactPhone(): int
     {
-        return $this->contact_phone;
+        return $this->contactPhone;
     }
 
     public function getAddress(): string
@@ -31,6 +31,6 @@ class CreateOrderDTO
 
     public function getUserId(): int
     {
-        return $this->user_id;
+        return $this->userId;
     }
 }
