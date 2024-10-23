@@ -11,7 +11,7 @@ class UserProduct extends Model
 
     public function getByUserIdAndProductId(int $userId, int $productId): ?array
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM user_products WHERE user_id = :userId AND product_id = :productId");
+        $stmt = self::getPDO()->prepare("SELECT * FROM user_products WHERE user_id = :userId AND product_id = :productId");
         $stmt->execute(['userId' => $userId, 'productId' => $productId]);
         $data = $stmt->fetchAll();
 
@@ -23,19 +23,19 @@ class UserProduct extends Model
 
     public function insert(int $userId, int $productId, int $amount)
     {
-        $stmt = $this->pdo->prepare("INSERT INTO user_products (user_id, product_id, amount) VALUES (:userId, :productId, :amount)");
+        $stmt = self::getPDO()->prepare("INSERT INTO user_products (user_id, product_id, amount) VALUES (:userId, :productId, :amount)");
         $stmt->execute(['userId' => $userId, 'productId' => $productId, 'amount' => $amount]);
     }
 
     public function updateAmount($userId, $productId, $amount,)
     {
-        $stmt = $this->pdo->prepare("UPDATE user_products SET amount = amount + :amount WHERE user_id = :userId AND product_id = :productId");
+        $stmt = self::getPDO()->prepare("UPDATE user_products SET amount = amount + :amount WHERE user_id = :userId AND product_id = :productId");
         $stmt->execute(['amount' => $amount, 'userId' => $userId, 'productId' => $productId]);
     }
 
     public function getByUserId(int $user_id): ?array
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM user_products WHERE user_id = :user_id");
+        $stmt = self::getPDO()->prepare("SELECT * FROM user_products WHERE user_id = :user_id");
         $stmt->execute(['user_id' => $user_id]);
         $data = $stmt->fetchAll();
 
@@ -47,7 +47,7 @@ class UserProduct extends Model
 
     public function deleteByUserId(int $user_id)
     {
-        $stmt = $this->pdo->prepare("DELETE FROM user_products WHERE user_id = :user_id");
+        $stmt = self::getPDO()->prepare("DELETE FROM user_products WHERE user_id = :user_id");
         $stmt->execute(['user_id' => $user_id]);
     }
 
