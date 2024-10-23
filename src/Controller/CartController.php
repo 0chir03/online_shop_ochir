@@ -3,18 +3,23 @@
 namespace Controller;
 
 use Model\Product;
+use Service\AuthService;
 
 class CartController
 {
+    private AuthService $authService;
+    public function __construct()
+    {
+        $this->authService = new AuthService();
+    }
     public function getCart()       //ВЫВОД КОРЗИНЫ
     {
-        session_start();
-        $user_id = $_SESSION['user_id'];
-        if (!isset($user_id)) {
+        $userId = $this->authService->getCurrentUser()->getId();
+        if (!isset($userId)) {
             header("Location: ./login");
         } else {
             $products = new Product();
-            $data = $products->getByUserId($user_id);
+            $data = $products->getByUserId($userId);
         }
         require_once "./../View/cart.php";
     }

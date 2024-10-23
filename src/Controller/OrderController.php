@@ -5,6 +5,7 @@ namespace Controller;
 use DTO\CreateOrderDTO;
 use Model\Product;
 use Request\CreateOrderRequest;
+use Service\AuthService;
 use Service\OrderService;
 
 
@@ -12,22 +13,22 @@ class OrderController
 {
 
     private OrderService $orderService;
+    private AuthService $authService;
 
     public function __construct()
     {
         $this->orderService = new OrderService();
+        $this->authService = new AuthService();
     }
     public function getOrder()
     {
-        session_start();
-
-        if (!isset($_SESSION['user_id'])) {
+        if (!$this->authService->check()) {
             header('Location: ./login');
         }
 
-        $user_id = $_SESSION['user_id'];
+        $userId = $this->authService->getCurrentUser()->getId();
         $products = new Product();
-        $array = $products->getByUserId($user_id);
+        $array = $products->getByUserId($userId);
         $sum = 0;
         foreach ($array as $key) {
             $sum = $sum + $key->getPrice() * $key->getAmount();
@@ -39,12 +40,12 @@ class OrderController
         session_start();
         $errors = $request->validate();
         if (empty($errors)) {
-            $user_id = $_SESSION['user_id'];
-            $contact_name = $request->getName();
-            $contact_phone = $request->getPhone();
+            $userId = $this->authService->getCurrentUser()->getId();
+            $contactName = $request->getName();
+            $contactPhone = $request->getPhone();
             $address = $request->getAddress();
 
-            $dto = new CreateOrderDTO($contact_name, $contact_phone, $address, $user_id);
+            $dto = new CreateOrderDTO($contactName, $contactPhone, $address, $userId);
 
             $this->orderService->create($dto);
 
