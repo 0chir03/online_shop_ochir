@@ -32,7 +32,7 @@ class App
                $class = new $controllerClassName();
                try {
                    return $class->$method($request);
-               } catch (\Throwable $exception) {
+               } catch (\Exception $exception) {
 
                    $loggerService = new LoggerService($exception);
                    $loggerService->log();
