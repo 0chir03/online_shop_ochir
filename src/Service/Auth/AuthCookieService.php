@@ -1,14 +1,14 @@
 <?php
 
-namespace Service;
+namespace Service\Auth;
 
 use Model\User;
-class AuthService
+
+class AuthCookieService implements AuthServiceInterface
 {
     public function check(): bool
     {
-        $this->sessionStart();
-        return isset($_SESSION['user_id']);
+        return isset($_COOKIE['user_id']);
     }
 
 
@@ -18,8 +18,7 @@ class AuthService
             return null;
         }
 
-        $this->sessionStart();
-        $userId = $_SESSION['user_id'];
+        $userId = $_COOKIE['user_id'];
         return User::getById($userId);
     }
 
@@ -29,18 +28,10 @@ class AuthService
         $data=User::getByLogin($login);
 
         if (($data !== null) and password_verify($password, $data->getPassword())) {
-            $this->sessionStart();
-            $_SESSION['user_id'] = $data->getId();
+            setcookie('user_id', $data->getId());
             return true;
         }
         return false;
     }
 
-
-    private function sessionStart()
-    {
-        if (session_status() !== PHP_SESSION_ACTIVE) {
-            session_start();
-        }
-    }
 }
