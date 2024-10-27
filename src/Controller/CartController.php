@@ -3,14 +3,14 @@
 namespace Controller;
 
 use Model\Product;
-use Service\AuthService;
+use Service\Auth\AuthServiceInterface;
 
 class CartController
 {
-    private AuthService $authService;
-    public function __construct()
+    private AuthServiceInterface $authService;
+    public function __construct(AuthServiceInterface $authService)
     {
-        $this->authService = new AuthService();
+        $this->authService = $authService;
     }
     public function getCart()       //ВЫВОД КОРЗИНЫ
     {
@@ -18,8 +18,7 @@ class CartController
         if (!isset($userId)) {
             header("Location: ./login");
         } else {
-            $products = new Product();
-            $data = $products->getByUserId($userId);
+            $data = Product::getByUserId($userId);
         }
         require_once "./../View/cart.php";
     }

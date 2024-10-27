@@ -5,7 +5,8 @@ namespace Controller;
 use DTO\CreateOrderDTO;
 use Model\Product;
 use Request\CreateOrderRequest;
-use Service\AuthService;
+use Service\Auth\AuthServiceInterface;
+use Service\Auth\AuthSessionService;
 use Service\OrderService;
 
 
@@ -13,12 +14,12 @@ class OrderController
 {
 
     private OrderService $orderService;
-    private AuthService $authService;
+    private AuthServiceInterface $authService;
 
-    public function __construct()
+    public function __construct(AuthServiceInterface $authService, OrderService $orderService)
     {
-        $this->orderService = new OrderService();
-        $this->authService = new AuthService();
+        $this->orderService = $orderService;
+        $this->authService = $authService;
     }
     public function getOrder()
     {
@@ -27,8 +28,7 @@ class OrderController
         }
 
         $userId = $this->authService->getCurrentUser()->getId();
-        $products = new Product();
-        $array = $products->getByUserId($userId);
+        $array = Product::getByUserId($userId);
         $sum = 0;
         foreach ($array as $key) {
             $sum = $sum + $key->getPrice() * $key->getAmount();
@@ -37,7 +37,6 @@ class OrderController
     }
     public function createOrder(CreateOrderRequest $request)
     {
-        session_start();
         $errors = $request->validate();
         if (empty($errors)) {
             $userId = $this->authService->getCurrentUser()->getId();

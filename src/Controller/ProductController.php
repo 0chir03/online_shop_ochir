@@ -4,7 +4,8 @@ namespace Controller;
 
 use Model\Product;
 use Request\AddProductRequest;
-use Service\AuthService;
+use Service\Auth\AuthServiceInterface;
+use Service\Auth\AuthSessionService;
 use Service\CartService;
 
 
@@ -12,18 +13,16 @@ class ProductController
 {
 
     private CartService $cartService;
-    private AuthService $authService;
+    private AuthServiceInterface $authService;
 
-    public function __construct()
+    public function __construct(AuthServiceInterface $authService, CartService $cartService)
     {
-        $this->cartService = new CartService();
-        $this->authService = new AuthService();
+        $this->cartService = $cartService;
+        $this->authService = $authService;
     }
 
     public function getCatalog()        //ВЫВОД КАТАЛОГА
     {
-        session_start();
-
         if (!$this->authService->check()) {
             header("Location: ./login");
         } else {
@@ -36,7 +35,6 @@ class ProductController
 
     public function addProduct(AddProductRequest $request)        //ДОБАВЛЕНИЕ ПРОДУКТА В КОРЗИНУ
     {
-        session_start();
         $errors = $request->validate();
         if (empty($errors)) {
             $userId = $this->authService->getCurrentUser()->getId();

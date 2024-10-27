@@ -3,12 +3,17 @@
 namespace Core;
 
 use Request\Request;
-use Service\LoggerService;
+use Service\Logger\LoggerServiceInterface;
 
 class App
 {
     private array $routes = [];
+    private LoggerServiceInterface $loggerService;
 
+    public function __construct(LoggerServiceInterface $loggerService)
+    {
+        $this->loggerService = $loggerService;
+    }
     public function run()
     {
 
@@ -29,13 +34,20 @@ class App
                    $request = new Request($requestUri, $requestMethod, $_POST);
                }
 
-               $class = new $controllerClassName();
+               $authService = new \Service\Auth\AuthSessionService();
+               $cartService = new \Service\CartService();
+               $orderService = new \Service\OrderService();
+
+               $class = new $controllerClassName($authService, $cartService, $orderService);
                try {
                    return $class->$method($request);
-               } catch (\Exception $exception) {
+               } catch (\Throwable $exception) {
 
-                   $loggerService = new LoggerService($exception);
-                   $loggerService->log();
+                   $this->loggerService->error('Произошла ошибка при обработке запроса', [
+                       'message' => $exception->getMessage(),
+                       'file' => $exception->getFile(),
+                       'line' => $exception->getLine(),
+                   ]);
 
                    http_response_code(500);
                    require_once "./../View/500.php";
