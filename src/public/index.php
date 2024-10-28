@@ -16,9 +16,45 @@ use Request\RegistrateRequest;
 
 Autoload::registrate(__DIR__ . '/../');
 
-$loggerService = new \Service\Logger\LoggerDbService();
+$container = new \Core\Container();
 
-$index = new App($loggerService);
+$container->set(CartController::class, function (\Core\Container $container) {
+    $authService = $container->get(\Service\Auth\AuthServiceInterface::class);
+
+    return new CartController($authService);
+});
+
+$container->set(OrderController::class, function (\Core\Container $container) {
+    $authService = $container->get(\Service\Auth\AuthServiceInterface::class);
+    $orderService = new \Service\OrderService();
+
+    return new OrderController($authService, $orderService);
+});
+
+$container->set(ProductController::class, function (\Core\Container $container) {
+    $authService = $container->get(\Service\Auth\AuthServiceInterface::class);
+    $cartService = new \Service\CartService();
+
+    return new ProductController($authService, $cartService);
+});
+
+$container->set(UserController::class, function (\Core\Container $container) {
+    $authService = $container->get(\Service\Auth\AuthServiceInterface::class);
+
+    return new UserController($authService);
+});
+
+$container->set(\Service\Logger\LoggerServiceInterface::class, function () {
+    return new \Service\Logger\LoggerFileService();
+});
+
+$container->set(\Service\Auth\AuthServiceInterface::class, function () {
+    return new \Service\Auth\AuthSessionService();
+});
+
+$loggerService = $container->get(\Service\Logger\LoggerServiceInterface::class);
+
+$index = new App($loggerService, $container);
 
 $index->addRoute('/login', 'GET', UserController::class, 'getLoginForm');
 $index->addRoute('/login', 'POST', UserController::class, 'login', LoginRequest::class);
