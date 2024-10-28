@@ -9,10 +9,12 @@ class App
 {
     private array $routes = [];
     private LoggerServiceInterface $loggerService;
+    private Container $container;
 
-    public function __construct(LoggerServiceInterface $loggerService)
+    public function __construct(LoggerServiceInterface $loggerService, Container $container)
     {
         $this->loggerService = $loggerService;
+        $this->container = $container;
     }
     public function run()
     {
@@ -34,13 +36,10 @@ class App
                    $request = new Request($requestUri, $requestMethod, $_POST);
                }
 
-               $authService = new \Service\Auth\AuthSessionService();
-               $cartService = new \Service\CartService();
-               $orderService = new \Service\OrderService();
+               $object = $this->container->get($controllerClassName);
 
-               $class = new $controllerClassName($authService, $cartService, $orderService);
                try {
-                   return $class->$method($request);
+                   return $object->$method($request);
                } catch (\Throwable $exception) {
 
                    $this->loggerService->error('Произошла ошибка при обработке запроса', [
