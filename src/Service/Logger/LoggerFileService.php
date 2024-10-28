@@ -9,7 +9,7 @@ class LoggerFileService implements LoggerServiceInterface
         $dateTime = date('Y-m-d H:i:s');
         $error = implode("\n", $data);
         $log = "\n".$message."\n".$dateTime."\n".$error."\n";
-        file_put_contents(__DIR__ . '/../Storage/Log/error.txt', $log, FILE_APPEND);
+        file_put_contents(__DIR__ . '/../../Storage/Log/error.txt', $log, FILE_APPEND);
     }
 
     public function info(string $message, array $data=[])
