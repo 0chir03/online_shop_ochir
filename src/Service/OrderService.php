@@ -54,6 +54,7 @@ class OrderService
                    $this->orderProduct->create($order_id, $product_id, $amount, $total_price);
                }
                $this->userProduct->deleteByUserId($orderDTO->getUserId());
+               throw new \Exception('test');
            } catch (\PDOException $exception) {
 
            $pdo->rollBack();
