@@ -9,6 +9,7 @@ class Product extends Model
     private string $description;
     private int $price;
     private string $image;
+    private string $info;
     private int $user_id;
     private int $product_id;
     private int $amount;
@@ -29,6 +30,7 @@ class Product extends Model
             $obj->description = $item['description'];
             $obj->price = $item['price'];
             $obj->image = $item['image'];
+            $obj->info = $item['information'];
             $array[] = $obj;
         }
         return $array;
@@ -50,6 +52,7 @@ class Product extends Model
             $obj->name = $item['name'];
             $obj->price = $item['price'];
             $obj->image = $item['image'];
+            $obj->info = $item['information'];
             $obj->user_id = $item['user_id'];
             $obj->product_id = $item['product_id'];
             $obj->amount = $item['amount'];
@@ -93,6 +96,7 @@ class Product extends Model
         $obj->description = $data['description'];
         $obj->price = $data['price'];
         $obj->image = $data['image'];
+        $obj->info = $data['information'];
 
         return $obj;
     }
@@ -136,4 +140,8 @@ class Product extends Model
         return $this->amount;
     }
 
+    public function getInfo(): string
+    {
+        return $this->info;
+    }
 }

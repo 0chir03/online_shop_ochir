@@ -1,0 +1,5 @@
+Произошла ошибка при обработке запроса
+2024-10-31 15:03:17
+Call to undefined method PDO::execute()
+/var/www/html/src/Model/OrderProduct.php
+20

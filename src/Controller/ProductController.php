@@ -3,10 +3,12 @@
 namespace Controller;
 
 use Model\Product;
+use Model\OrderProduct;
 use Request\AddProductRequest;
+use Request\AddReviewRequest;
 use Service\Auth\AuthServiceInterface;
-use Service\Auth\AuthSessionService;
 use Service\CartService;
+use Model\Review;
 
 
 class ProductController
@@ -26,8 +28,7 @@ class ProductController
         if (!$this->authService->check()) {
             header("Location: ./login");
         } else {
-          $products = new Product();
-          $data = $products->getProducts();
+            $data = Product::getProducts();
         }
 
         require_once "./../View/catalog.php";
@@ -48,4 +49,54 @@ class ProductController
         require_once "./../View/catalog.php";
     }
 
+    public function getProduct(AddProductRequest $request)        //ПЕРЕЙТИ К ОПИСАНИЮ ПРОДУКТА
+    {
+        if (!$this->authService->check()) {
+            header("Location: ./login");
+        } else {
+            $productId = $request->getProductId();
+            $data = Product::getByProdId($productId);
+            $array = Review::getByProdId($productId);
+            $sum = 0;
+            if ($array !== null) {
+                foreach ($array as $item) {
+                    $sum = $sum + $item->getRating();
+                }
+                $count = count($array);
+                $averageRating = $sum/$count;
+            } else {
+                $averageRating = 0;
+            }
+        }
+       require_once "./../View/product.php";
+    }
+
+    public function addReview(AddReviewRequest $request)        //ДОБАВИТЬ ОТЗЫВ О ПРОДУКТЕ
+    {
+        if (!$this->authService->check()) {
+            header("Location: ./login");
+        } else {
+            $errors = $request->validate();
+            if (empty($errors)) {
+                $productId = $request->getProductId();
+                $array = OrderProduct::getOrderProducts($productId);
+                if (!empty($array)) {
+                        foreach ($array as $item) {
+                                $product = $item->getProductId();
+                                if (empty($product)) {
+                                    echo "Для того, чтобы оставить отзыв, необходимо сделать заказ";
+                                }
+                            }
+                        $userId = $this->authService->getCurrentUser()->getId();
+                        $comment = $request->getComment();
+                        $rating = $request->getRating();
+                        $date = date("Y-m-d");
+                        Review::create($userId, $productId, $date, $rating, $comment);
+                        echo "Благодарим за отзыв";
+                } else {
+                    echo "Для того, чтобы оставить отзыв, необходимо приборести наш продукт";
+                }
+            }
+        }
+    }
 }

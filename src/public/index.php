@@ -7,12 +7,14 @@ use Controller\EndOrderController;
 use Controller\OrderController;
 use Controller\ProductController;
 use Controller\UserController;
+use Controller\ReviewController;
 use Core\App;
 use Core\Autoload;
 use Request\AddProductRequest;
 use Request\CreateOrderRequest;
 use Request\LoginRequest;
 use Request\RegistrateRequest;
+use \Request\AddReviewRequest;
 
 Autoload::registrate(__DIR__ . '/../');
 
@@ -44,6 +46,24 @@ $container->set(UserController::class, function (\Core\Container $container) {
     return new UserController($authService);
 });
 
+$container->set(ReviewController::class, function (\Core\Container $container) {
+    $authService = $container->get(\Service\Auth\AuthServiceInterface::class);
+
+    return new ReviewController($authService);
+});
+
+$container->set(\Service\CartService::class, function (\Core\Container $container) {
+    $userProduct = $container->get(\Service\CartService::class);
+
+    return new \Service\CartService($userProduct);
+});
+
+$container->set(\Service\CartService::class, function (\Core\Container $container) {
+    $userProduct = $container->get(\Service\CartService::class);
+
+    return new \Service\CartService($userProduct);
+});
+
 $container->set(\Service\Logger\LoggerServiceInterface::class, function () {
     return new \Service\Logger\LoggerFileService();
 });
@@ -67,6 +87,8 @@ $index->addRoute('/cart', 'POST', CartController::class, 'getOrder');
 $index->addRoute('/order', 'GET', OrderController::class, 'getOrder');
 $index->addRoute('/order', 'POST', OrderController::class, 'createOrder', CreateOrderRequest::class);
 $index->addRoute('/end_order', 'GET', EndOrderController::class, 'getForm');
+$index->addRoute('/product', 'POST', ProductController::class, 'getProduct', AddProductRequest::class);
+$index->addRoute('/review', 'POST', ProductController::class, 'addReview', AddReviewRequest::class);
 
 $index->run();
 
