@@ -3,24 +3,35 @@
 namespace Controller;
 
 use Model\Product;
-use Model\OrderProduct;
 use Request\AddProductRequest;
 use Request\AddReviewRequest;
 use Service\Auth\AuthServiceInterface;
 use Service\CartService;
 use Model\Review;
-
+use Service\RatingService;
+use Service\GetReviewService;
+use Service\AddReviewService;
 
 class ProductController
 {
 
     private CartService $cartService;
     private AuthServiceInterface $authService;
+    private RatingService $ratingService;
+    private GetReviewService $getReviewService;
+    private AddReviewService $addReviewService;
 
-    public function __construct(AuthServiceInterface $authService, CartService $cartService)
+    public function __construct(AuthServiceInterface $authService,
+                                CartService $cartService,
+                                RatingService $ratingService,
+                                GetReviewService $getReviewService,
+                                AddReviewService $addReviewService)
     {
         $this->cartService = $cartService;
         $this->authService = $authService;
+        $this->ratingService = $ratingService;
+        $this->getReviewService = $getReviewService;
+        $this->addReviewService = $addReviewService;
     }
 
     public function getCatalog()        //ВЫВОД КАТАЛОГА
@@ -56,17 +67,8 @@ class ProductController
         } else {
             $productId = $request->getProductId();
             $data = Product::getByProdId($productId);
-            $array = Review::getByProdId($productId);
-            $sum = 0;
-            if ($array !== null) {
-                foreach ($array as $item) {
-                    $sum = $sum + $item->getRating();
-                }
-                $count = count($array);
-                $averageRating = $sum/$count;
-            } else {
-                $averageRating = 0;
-            }
+            $reviews = Review::getByProdId($productId);
+            $averageRating = $this->ratingService->get($reviews);
         }
        require_once "./../View/product.php";
     }
@@ -78,25 +80,11 @@ class ProductController
         } else {
             $errors = $request->validate();
             if (empty($errors)) {
+                $userId = $this->authService->getCurrentUser()->getId();
                 $productId = $request->getProductId();
-                $array = OrderProduct::getOrderProducts($productId);
-                if (!empty($array)) {
-                        foreach ($array as $item) {
-                                $product = $item->getProductId();
-                                if (empty($product)) {
-                                    echo "Для того, чтобы оставить отзыв, необходимо сделать заказ";
-                                }
-                            }
-                        $userId = $this->authService->getCurrentUser()->getId();
-                        $comment = $request->getComment();
-                        $rating = $request->getRating();
-                        $date = date("Y-m-d");
-                        Review::create($userId, $productId, $date, $rating, $comment);
-                        echo "Благодарим за отзыв";
-                } else {
-                    echo "Для того, чтобы оставить отзыв, необходимо приборести наш продукт";
-                }
+                $this->addReviewService->add($productId, $userId, $request);
             }
         }
+        //require_once "./../View/product.php";
     }
 }

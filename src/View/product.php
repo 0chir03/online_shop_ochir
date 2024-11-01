@@ -24,20 +24,11 @@
 
     <div class="contain">
         <h2>Отзывы</h2>
-        <p><?php use Model\User;
-                 if ($array !== null) {
-                     foreach ($array as $item) {
-                         $userId = $item->getUserId();
-                         $name = User::getById($userId)->getName();
-                         echo $item->getDate() . " " . $name . "<br/>" . $item->getComment() . "<br/>" . "<br/>";
-                     }
-                 } else {
-                     echo "Пока нет отзывов";
-                 }?></p>
+        <p><?php $this->getReviewService->get($reviews); ?></p>
     </div>
     
     <div class="area-d">
-        <form action="/review" method="post">
+        <form action="/add_review" method="post">
             <input type="hidden" name="product_id" value="<?php echo $data->getId();?>" id="product_id" required>
                 <label>
                     Отзыв:<label style="color: red;">

@@ -3,7 +3,7 @@
 namespace Model;
 class OrderProduct extends Model
 {
-   private int $id;
+    private int $id;
     private int $orderId;
     private int $productId;
     private int $amount;
@@ -15,10 +15,10 @@ class OrderProduct extends Model
         $stmt->execute(['orderId' => $orderId, 'productId' => $productId, 'amount' => $amount, 'totalPrice' => $totalPrice]);
     }
 
-    public static function getOrderProducts(int $productId): ? array
+    public static function getOrderProducts(int $productId, int $userId): ? array
     {
-        $stmt = self::getPDO()->prepare("SELECT * FROM order_products WHERE product_id = :productId");
-        $stmt->execute(['productId' => $productId]);
+        $stmt = self::getPDO()->prepare("SELECT * FROM order_products INNER JOIN orders  ON order_products.order_id = orders.id WHERE order_products.product_id = :productId AND orders.user_id = :userId");
+        $stmt->execute(['productId' => $productId, 'userId' => $userId] );
         $result = $stmt->fetchAll();
 
         if (empty($result)) {

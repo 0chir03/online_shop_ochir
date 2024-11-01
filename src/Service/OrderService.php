@@ -40,8 +40,8 @@ class OrderService
                 $order_id = $this->order->create($orderDTO->getContactName(),
                                                  $orderDTO->getContactPhone(),
                                                  $orderDTO->getAddress(),
-                                                 $orderDTO->getUserId(),
-                                                 $sum
+                                                 $sum,
+                                                 $orderDTO->getUserId()
                                                 );
 
                foreach ($data as $item) {

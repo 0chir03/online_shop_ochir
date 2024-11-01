@@ -36,20 +36,17 @@ $container->set(OrderController::class, function (\Core\Container $container) {
 $container->set(ProductController::class, function (\Core\Container $container) {
     $authService = $container->get(\Service\Auth\AuthServiceInterface::class);
     $cartService = new \Service\CartService();
+    $ratingService = new \Service\RatingService();
+    $getReviewService = new \Service\GetReviewService();
+    $addReviewService = new \Service\AddReviewService();
 
-    return new ProductController($authService, $cartService);
+    return new ProductController($authService, $cartService, $ratingService, $getReviewService, $addReviewService);
 });
 
 $container->set(UserController::class, function (\Core\Container $container) {
     $authService = $container->get(\Service\Auth\AuthServiceInterface::class);
 
     return new UserController($authService);
-});
-
-$container->set(ReviewController::class, function (\Core\Container $container) {
-    $authService = $container->get(\Service\Auth\AuthServiceInterface::class);
-
-    return new ReviewController($authService);
 });
 
 $container->set(\Service\CartService::class, function (\Core\Container $container) {
@@ -88,7 +85,7 @@ $index->addRoute('/order', 'GET', OrderController::class, 'getOrder');
 $index->addRoute('/order', 'POST', OrderController::class, 'createOrder', CreateOrderRequest::class);
 $index->addRoute('/end_order', 'GET', EndOrderController::class, 'getForm');
 $index->addRoute('/product', 'POST', ProductController::class, 'getProduct', AddProductRequest::class);
-$index->addRoute('/review', 'POST', ProductController::class, 'addReview', AddReviewRequest::class);
+$index->addRoute('/add_review', 'POST', ProductController::class, 'addReview', AddReviewRequest::class);
 
 $index->run();
 
